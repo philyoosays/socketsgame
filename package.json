@@ -1,0 +1,25 @@
+{
+  "name": "space-team",
+  "version": "1.0.0",
+  "description": "a copy of a co-operative mobile game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bothdev": "concurrently \"cd client && yarn start\" \"npm run dev\"",
+    "clean": "rm -rf client/node_modules && rm -rf node_modules"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.generalassemb.ly:philyoo/space-team.git"
+  },
+  "author": "Phil Yoo - philyoomail@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.17.5"
+  },
+  "dependencies": {
+    "concurrently": "^3.5.1",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
+  }
+}
