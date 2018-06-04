@@ -2,10 +2,11 @@
   "name": "space-team",
   "version": "1.0.0",
   "description": "a copy of a co-operative mobile game",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bothdev": "concurrently \"cd client && yarn start\" \"npm run dev\"",
+    "devboth": "concurrently \"cd client && yarn start\" \"npm run dev\"",
     "clean": "rm -rf client/node_modules && rm -rf node_modules"
   },
   "repository": {
@@ -20,6 +21,7 @@
   "dependencies": {
     "concurrently": "^3.5.1",
     "express": "^4.16.3",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "ws": "^5.2.0"
   }
 }
