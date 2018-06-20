@@ -22,7 +22,7 @@ export default class WaitingRoom extends React.Component {
     })
     ws.onmessage = (message) => {
       let thePackage = message.data.charAt(0) === '{' ? JSON.parse(message.data) : message.data;
-      console.log('I ahve a message', thePackage)
+      console.log('WaitingRoom received: ', thePackage)
       if(thePackage.gamestatus === 'joined') {
         console.log('currentplayers', this.state.numplayers)
         console.log('incomingplayers', thePackage.players)

@@ -61,6 +61,7 @@ module.exports = {
         wsLogic.signalStart(package, this.activeGames, webSock)
         package.buttons = game.dealTheButtons(package, this.activeGames);
         game.initializeScore(package, this.activeGames);
+        console.log('i am the cause of your issues')
         this.makeAndSendPackage(package, 'gamestart', webSock)
         // this.parser(webSock, package);
         break;
@@ -81,8 +82,9 @@ module.exports = {
       // instruction stream ////
       //////////////////////////
       case package.sendinstruction === true:
-        game.sendInstructions(package, this.activeGames, webSock)
-        package.sendinstruction = false
+        console.log('SendInstruction disabled')
+        // game.sendInstructions(package, this.activeGames, webSock)
+        // package.sendinstruction = false
         // this.parser(webSock, package)
         break;
 

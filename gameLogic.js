@@ -66,6 +66,16 @@ module.exports = {
     }
   },
 
+  squashObj(instruction) {
+    if(typeof instruction === 'object') {
+      if(Object.keys(instruction).length === 1) {
+        return this.squashObj(instruction[0][Object.keys(instruction)[0]])
+      } else if(Object.keys(instruction).length > 1) {
+        return instruction;
+      }
+    }
+  },
+
   shuffleArray(arr) {
     let array = arr.slice();
     for(let i = 0; i < array.length; i++) {
@@ -85,12 +95,14 @@ module.exports = {
     if(!theGame[0].hasOwnProperty('mixedarray')){
       theGame[0].mixedArray = this.shuffleArray(buttons)
     }
-    let theButtons = [];
+    theGame[0].buttons = [];
+    let theButtons = []
     for(let i = 0; i < 5; i++) {
-      theButtons.push(theGame[0].mixedArray.shift())
+      let oneButton = theGame[0].mixedArray.shift()
+      theGame[0].buttons.push(oneButton);
+      theButtons.push(oneButton)
     }
-    theGame[0].buttons = theButtons
-    return theButtons.slice();
+    return theGame[0].buttons.slice();
   },
 
   initializeScore(package, activeGames) {
@@ -104,16 +116,27 @@ module.exports = {
     theGame[0].players.forEach(client => {
       if(this.areYouTheClient(webSock, client)) {
         if(client.hasOwnProperty('instruction')){
-          console.log('thisisclient instruct', client.instruction)
-          console.log('thisisclone of client', Object.assign({}, this.killArray(client.instruction)))
+          // console.log('thisisclient instruct', client.instruction)
+          // console.log('thisisclone of client', Object.assign({}, this.killArray(client.instruction)))
           theGame[0].buttons.push(Object.assign({}, this.killArray(client.instruction)))
+        } else {
+          console.log('client has no instruction')
         }
       }
     })
 
+    let copyArray = []
+    theGame[0].buttons.forEach(button => {
+      if(package.buttons.indexOf(button.id) === -1) {
+        copyArray.push(button)
+      }
+    })
+    // console.log('allbuttons', theGame[0].buttons)
+    // console.log('copyaray', copyArray)
+
     doWhileLoopAgain = true;
     let safetyCounter = 0;
-
+    let beLessRandom = true
 
 
     while(doWhileLoopAgain === true) {
@@ -128,19 +151,40 @@ module.exports = {
           if(this.instructionIsNotSameAsPrevious(client, instruction)) {
             if(beLessRandom) {
               if(this.instructionIsNotOneOfMine(package, instruction)) {
-                this.makeAndSendInstructionPackage(client, instruction, beLessRandom)
+                // this.makeAndSendInstructionPackage(client, instruction, beLessRandom)
+                console.log('thisisinstruction', instruction)
+                client.instruction = instruction;
+                let sendPackage = {
+                  'buttonid': instruction[0].id,
+                  'instruction': instruction[0].instruction
+                }
+                console.log('instructions sent this: ', sendPackage)
+                client.client.send(JSON.stringify(sendPackage))
+                doWhileLoopAgain = false;
+                client.beLessRandom = !beLessRandom;
               } else {
                 // the instruction IS one of MINE and NOT THE SAME as the previous
                 this.returnTheInstructionToArray(theGame, instruction)
               }
             } else {
               // Just use whatever the random gives me
-              this.makeAndSendInstructionPackage(client, instruction, beLessRandom)
+              // this.makeAndSendInstructionPackage(client, instruction, beLessRandom)
+              console.log('thisisinstruction', instruction)
+              client.instruction = instruction;
+              let sendPackage = {
+                'buttonid': instruction[0].id,
+                'instruction': instruction[0].instruction
+              }
+              console.log('instructions sent this: ', sendPackage)
+              client.client.send(JSON.stringify(sendPackage))
+              doWhileLoopAgain = false;
+              client.beLessRandom = !beLessRandom;
             }
           } else {
             // the instruction IS the SAME as the previous
             this.returnTheInstructionToArray(theGame, instruction)
           }
+          console.log('I\'m not finding the client')
         }
 
         // SEE IF THERE IS A BETTER WAY!!!!
@@ -191,7 +235,8 @@ module.exports = {
     let theGame = wsLogic.findGame(package.gameid, activeGames);
 
     theGame[0].players.forEach(client => {
-      if(client.instruction[0].id === package.buttonid) {
+      console.log('thisis client', client)
+      if(client.instruction.id === package.buttonid) {
         client.client.send(JSON.stringify({stoptimer: true}))
         console.log('Sent from buttonPress: ', {stoptimer: true})
       }
@@ -232,6 +277,8 @@ module.exports = {
 
   instructionIsNotSameAsPrevious(client, instruction) {
     if(client.instruction !== instruction) {
+      console.log('iamclientinstruct', client.instruction)
+      console.log('iamreginstruction', instruction)
       return true;
     } else {
       return false;
@@ -239,17 +286,18 @@ module.exports = {
   },
 
   returnTheInstructionToArray(theGame, instruction) {
-    theGame[0].buttons.push(Object.assign({}, instruction));
+    theGame[0].buttons.push(this.squashObj(instruction));
   },
 
   instructionIsNotOneOfMine(package, instruction) {
-    if(package.buttons.indexOf(instruction[0].id) === -1) {
+    if(package.buttons.indexOf(this.killArray(instruction).id) === -1) {
       return true;
     } else {
       return false;
     }
   },
 
+// I think the problem is here because I'm giving it the client but it's not affecting the real client
   makeAndSendInstructionPackage(client, instruction, beLessRandom, webSock) {
     console.log('thisisinstruction', instruction)
     client.instruction = instruction;
@@ -257,6 +305,7 @@ module.exports = {
       'buttonid': instruction[0].id,
       'instruction': instruction[0].instruction
     }
+    console.log('instructions sent this: ', sendPackage)
     client.client.send(JSON.stringify(sendPackage))
     doWhileLoopAgain = false;
     client.beLessRandom = !beLessRandom;

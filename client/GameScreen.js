@@ -22,15 +22,19 @@ export default class GameScreen extends React.Component {
   }
 
   componentWillMount() {
-    if(this.props.gameactive === false) {
+    let counter = 0
+    if(this.props.gameactive === false && counter === 0) {
       thePackage = {
         gamestart: true,
         gameid: this.props.gameid
       }
+      counter++;
       ws.send(JSON.stringify(thePackage))
+      console.log('GameScreen sending:', thePackage)
       this.props.signalstart();
     }
     ws.onmessage = (message) => {
+      console.log('GameScreen receiving: ', message.data)
       let thePackage = message.data.charAt(0) === '{' ? JSON.parse(message.data) : message.data;
       if(thePackage.hasOwnProperty('buttons')) {
         let tempButtons = []
@@ -107,7 +111,7 @@ export default class GameScreen extends React.Component {
   }
 
   render() {
-    // let excrement = this.state.text === '💩💩💩' ? this.state.text : '';
+    // 556830 let excrement = this.state.text === '💩💩💩' ? this.state.text : '';
     // let serverMessage = this.state.message.charAt(0) === '[' ? '' : this.state.message;
     return (
       <View style={styles.container}>

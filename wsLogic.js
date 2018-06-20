@@ -73,7 +73,7 @@ module.exports = {
   gameStartCondition(package, activeGames) {
     let theGame = this.findGame(package.gameid, activeGames)
     let gameStart = true;
-    console.log('the game palyers',theGame[0].players)
+    console.log('gameStartCondition: game players',theGame[0].players)
     theGame[0].players.forEach(player => {
       if(player.ready === false) {
         gameStart = false;
@@ -87,6 +87,7 @@ module.exports = {
     let theGame = this.findGame(package.gameid, activeGames);
     let theTorch = {startgame: true}
     webSock.broadcastRoom(theTorch, theGame[0].players, webSock)
+    console.log('wsLogic.signalStart broadcasting: ', theTorch)
   },
 
 }
