@@ -104,8 +104,8 @@ module.exports = {
     }
     return theGame[0].buttons.slice();
   },
-
-  initializeScore(package, activeGames) {
+// !!!!!!!!!! I CAHNGED THIS
+  initializeGame(package, activeGames) {
     let theGame = wsLogic.findGame(package.gameid, activeGames);
     theGame[0].score = 0
   },

@@ -38,14 +38,14 @@ export default class Intro extends React.Component {
       /////////////////
       // CATCH ALL ////
       /////////////////
-      if(typeof thePackage === 'string') {
-        this.setState({
-          message: thePackage
-        })
-        console.log('Have message: ',this.state.message)
-      } else if(typeof thePackage === 'object') {
-        console.log('Have Payload: ', thePackage)
-      }
+      // if(typeof thePackage === 'string') {
+      //   this.setState({
+      //     message: thePackage
+      //   })
+      //   console.log('Have message: ',this.state.message)
+      // } else if(typeof thePackage === 'object') {
+      //   console.log('Have Payload: ', thePackage)
+      // }
     }
   }
 
@@ -59,6 +59,7 @@ export default class Intro extends React.Component {
   makeAndSendPackage(key, value) {
     thePackage[key] = value;
     ws.send(JSON.stringify(thePackage))
+    console.log('Intro sending: ', thePackage)
   }
 
   makeGame() {

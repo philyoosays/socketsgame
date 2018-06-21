@@ -22,13 +22,11 @@ export default class GameScreen extends React.Component {
   }
 
   componentWillMount() {
-    let counter = 0
-    if(this.props.gameactive === false && counter === 0) {
+    if(this.props.gameactive === false && this.state.buttons[0].button === 'fuck') {
       thePackage = {
         gamestart: true,
         gameid: this.props.gameid
       }
-      counter++;
       ws.send(JSON.stringify(thePackage))
       console.log('GameScreen sending:', thePackage)
       this.props.signalstart();
@@ -58,13 +56,13 @@ export default class GameScreen extends React.Component {
       /////////////////
       // CATCH ALL ////
       /////////////////
-      if(typeof thePackage === 'string') {
-        this.setState({
-          message: thePackage
-        })
-      } else if(typeof thePackage === 'object') {
-        console.log('Have Payload', thePackage)
-      }
+      // if(typeof thePackage === 'string') {
+      //   this.setState({
+      //     message: thePackage
+      //   })
+      // } else if(typeof thePackage === 'object') {
+      //   console.log('Have Payload', thePackage)
+      // }
     }
   }
 
@@ -75,6 +73,7 @@ export default class GameScreen extends React.Component {
       thePackage.buttons.push(d.id)
     })
     ws.send(JSON.stringify(thePackage))
+    console.log('GameScreen sending: ', thePackage)
   }
 
   getInstructions(buttons) {

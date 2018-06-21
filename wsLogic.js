@@ -73,7 +73,6 @@ module.exports = {
   gameStartCondition(package, activeGames) {
     let theGame = this.findGame(package.gameid, activeGames)
     let gameStart = true;
-    console.log('gameStartCondition: game players',theGame[0].players)
     theGame[0].players.forEach(player => {
       if(player.ready === false) {
         gameStart = false;

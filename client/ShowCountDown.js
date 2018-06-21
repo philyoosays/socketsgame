@@ -17,7 +17,7 @@ export default class ShowCountDown extends React.Component {
     }, 1000)
     setTimeout(() => {
       clearInterval(theCountdown)
-      this.props.next('gamescreen')
+      this.props.next('endscreen')
     }, 6010)
   }
 
