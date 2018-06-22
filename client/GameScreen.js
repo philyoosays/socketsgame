@@ -16,32 +16,37 @@ export default class GameScreen extends React.Component {
   }
 
   resetPackage() {
+    // let tempArray = []
+    // this.state.buttons.forEach(d => {
+    //   tempArray = d.id
+    // })
     thePackage = {
-      gameid: this.props.gameid
+      gameid: this.props.gameid,
+      // buttons: tempArray
     }
   }
 
   componentWillMount() {
     if(this.props.gameactive === false && this.state.buttons[0].button === 'fuck') {
       thePackage = {
-        gamestart: true,
-        gameid: this.props.gameid
+        gameid: this.props.gameid,
+        dealbuttons: true
       }
       ws.send(JSON.stringify(thePackage))
       console.log('GameScreen sending:', thePackage)
       this.props.signalstart();
     }
+    console.log('!!!!!!!!IAM RUNNING!!!!!!')
     ws.onmessage = (message) => {
-      console.log('GameScreen receiving: ', message.data)
       let thePackage = message.data.charAt(0) === '{' ? JSON.parse(message.data) : message.data;
+      console.log('GameScreen receiving: ', thePackage)
+
+      // BUTTONS
       if(thePackage.hasOwnProperty('buttons')) {
-        let tempButtons = []
-        console.log('thepackage', thePackage)
         this.setState({
           buttons: thePackage.buttons
         })
-        console.log('thisis the state', this.state.buttons)
-        this.getInstructions(tempButtons)
+        this.getInstructions()
       }
       if(thePackage.hasOwnProperty('instruction')) {
         this.processInstruction(thePackage)
@@ -51,8 +56,10 @@ export default class GameScreen extends React.Component {
         this.stopTimer()
       }
       if(thePackage.hasOwnProperty('winlose')) {
+        this.stopTimerEndGame();
         this.props.next(thePackage.winlose)
       }
+      console.log('GS package', thePackage)
       /////////////////
       // CATCH ALL ////
       /////////////////
@@ -68,6 +75,7 @@ export default class GameScreen extends React.Component {
 
   makePackageAndSend(buttons) {
     thePackage.sendinstruction = true;
+    thePackage.gameid = this.props.gameid;
     thePackage.buttons = []
     this.state.buttons.forEach(d => {
       thePackage.buttons.push(d.id)
@@ -76,7 +84,7 @@ export default class GameScreen extends React.Component {
     console.log('GameScreen sending: ', thePackage)
   }
 
-  getInstructions(buttons) {
+  getInstructions() {
     this.resetPackage();
     this.makePackageAndSend()
   }
@@ -97,7 +105,8 @@ export default class GameScreen extends React.Component {
   instructionTimer() {
     timer = setTimeout(() => {
       this.resetPackage()
-      thePackage.score = -1
+      thePackage.score = -1;
+      thePackage.sendinstruction = true;
       this.makePackageAndSend()
     }, 10000)
   }
@@ -105,8 +114,13 @@ export default class GameScreen extends React.Component {
   stopTimer() {
     clearTimeout(timer)
     this.resetPackage();
-    thePackage.score = 1
+    thePackage.score = 1;
+    thePackage.sendinstruction = true;
     this.makePackageAndSend()
+  }
+
+  stopTimerEndGame() {
+    clearTimeout(timer)
   }
 
   render() {

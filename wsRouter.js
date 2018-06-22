@@ -54,16 +54,24 @@ module.exports = {
 
       //////////////////////////
       // GAMESTART          ////
-      // Deal the buttons   ////
-      // and begin the game ////
+      // begin the game     ////
       //////////////////////////
       case package.gamestart === true:
         wsLogic.signalStart(package, this.activeGames, webSock)
         // package.buttons = game.dealTheButtons(package, this.activeGames);
-        game.initializeScore(package, this.activeGames);
+        game.initializeGame(package, this.activeGames);
 
         this.makeAndSendPackage(package, 'gamestart', webSock)
         // this.parser(webSock, package);
+        break;
+
+      //////////////////////////
+      // DEALBUTTONS        ////
+      // make and send      ////
+      //////////////////////////
+      case package.dealbuttons === true:
+        package.buttons = game.dealTheButtons(package, this.activeGames);
+        this.makeAndSendPackage(package, 'dealbuttons', webSock)
         break;
 
       //////////////////////////
@@ -82,10 +90,9 @@ module.exports = {
       // instruction stream ////
       //////////////////////////
       case package.sendinstruction === true:
-        console.log('SendInstruction disabled')
-        // game.sendInstructions(package, this.activeGames, webSock)
-        // package.sendinstruction = false
-        // this.parser(webSock, package)
+        game.sendInstructions(package, this.activeGames, webSock)
+        package.sendinstruction = false
+        this.parser(webSock, package)
         break;
 
       /////////////////////
