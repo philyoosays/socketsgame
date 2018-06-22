@@ -36,7 +36,7 @@ export default class App extends React.Component {
     //   ));
     // });
 
-    ws = new WebSocket('ws://192.168.1.1:8097');
+    ws = new WebSocket('ws://192.168.1.5:8097');
     // ws = new WebSocket('ws://173.2.6.52:8097');
     // ws = new WebSocket('ws://192.168.1.107:8097');
     ws.addEventListener('open', function (event) {

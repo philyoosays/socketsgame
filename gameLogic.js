@@ -99,14 +99,14 @@ module.exports = {
     // }
     // theGame[0].buttons = [];
     //////////////////////////
-    // let theButtons = []
+    let theButtons = []
     for(let i = 0; i < 5; i++) {
       let oneButton = theGame[0].undealtButtons.shift()
       theGame[0].buttons.push(oneButton);
-      // theButtons.push(oneButton)
+      theButtons.push(oneButton)
     }
     console.log('this is the game in deal buttons', theGame)
-    return theGame[0].buttons.slice();
+    return theButtons.slice();
   },
 
   initializeGame(package, activeGames) {
@@ -123,8 +123,6 @@ module.exports = {
       client.beLessRandom = false
     })
   },
-
-  // GAME OBJECT
 
 
   sendInstructions(package, activeGames, webSock) {
